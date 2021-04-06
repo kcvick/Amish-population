@@ -137,7 +137,7 @@
 	<section id="about">
 		<!--<h2>About this map</h2>-->
 		<p> This map shows state-level Amish population distribution in 2020. Darker colors reflect higher population.
-			Hover over a state to view 2000-2020 Amish population growth data. This map was developed using data from
+			Hover over a state to view 2000-2020 Amish population growth data. This map was developed with resources from
 			the <a href="http://groups.etown.edu/amishstudies/">Young Center</a> for Anabaptist and Pietist Studies at
 			Elizabethtown College in Pennysylvania. The Young Center estimates that the Amish population doubles every
 			twenty years, reporting large families and high retention in the community (85%) as primary contributors to
@@ -172,47 +172,64 @@
 					return {
 						color: '#dddddd',
 						weight: 1,
-						fillOpacity: 1,
-						fillColor: '#1f78b4'
+						fillOpacity: 0.2,
+						fillColor: '#FBFCFC'
 					};
 				},
 				onEachFeature: function (feature, layer) {
 					var prop = layer.feature.properties
-					var popup = `<b>${feature.properties.NAME} County</b>` + " " + "has a median rent of" + " " + `<b>$${feature.properties.RENT}</b>`
+					var popup = `<b>${feature.properties.NAME}</b>` + " " + "has a median rent of" + " " + `<b>$${feature.properties.RENT}</b>`
 					layer.bindTooltip(popup)
 				},
 			}).addTo(map);
 
-			// your json var: states
-			// states.forEach(function (state) {
-			// 	var polygon = L.polygon(state.geometry.coordinates, {
-			// 		weight: 1,
-			// 		fillOpacity: 0.7,
-			// 		color: 'white',
-			// 		dashArray: '3'
+			// var popLayer = $.getJSON("us_states_20m.json", function (data) {
+			// 	var dataLayer = L.geoJson(data, {
+			// 		style: function (feature) {
+			// 			return {
+			// 				color: '#dddddd',
+			// 				weight: 1,
+			// 				fillOpacity: 0.2,
+			// 				fillColor: '#FBFCFC'
+			// 			};
+			// 		},
+			// 		onEachFeature: function (feature, layer) {
+			// 			var prop = layer.feature.properties
+			// 			var popup = `<b>${feature.properties.NAME}</b>` + " " + "has a median rent of" + " " + `<b>$${feature.properties.RENT}</b>`
+			// 			layer.bindTooltip(popup)
+			// 		},
 			// 	}).addTo(map);
-			// });
 
-			// Get basemap URL from Leaflet Providers
-			var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+				// your json var: states
+				// states.forEach(function (state) {
+				// 	var polygon = L.polygon(state.geometry.coordinates, {
+				// 		weight: 1,
+				// 		fillOpacity: 0.7,
+				// 		color: 'white',
+				// 		dashArray: '3'
+				// 	}).addTo(map);
+				// });
 
-			var basemap_options = {
-				maxZoom: 19,
-				attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
-				subdomains: 'abcd',
-				ext: 'png'
-			};
-			// Get basemap attributes from Leaflet Providers
-			// var basemap_attributes = {
-			// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-			// 	subdomains: 'abcd',
-			// 	maxZoom: 19
-			// };
-			// requests some map tiles
-			var tiles = L.tileLayer(basemap_url, basemap_url);
+				// Get basemap URL from Leaflet Providers
+				var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-			map.addLayer(tiles);
-		});
+				var basemap_options = {
+					maxZoom: 19,
+					attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+					subdomains: 'abcd',
+					ext: 'png'
+				};
+				// Get basemap attributes from Leaflet Providers
+				// var basemap_attributes = {
+				// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				// 	subdomains: 'abcd',
+				// 	maxZoom: 19
+				// };
+				// requests some map tiles
+				var tiles = L.tileLayer(basemap_url, basemap_url);
+
+				map.addLayer(tiles);
+			});
 		//var message = '<h2>University of Kentucky!</h2>Department of Geography';
 	</script>
 
