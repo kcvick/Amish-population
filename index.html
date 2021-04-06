@@ -19,9 +19,9 @@
 		body {
 			margin: 0;
 			padding: 0;
-			font-family: 'Quicksand', sans-serif;
+			font-family: serif;
 			font-size: 100%;
-			color: #3d3d3d;
+			color: #131212;
 		}
 
 		h1 {
@@ -30,7 +30,7 @@
 			top: 10px;
 			left: 15px;
 			font-size: 1.5em;
-			font-family: 'Quicksand', sans-serif;
+			font-family: Tahoma, sans-serif;
 			font-weight: 700;
 			letter-spacing: .04em;
 			padding: 10px 15px;
@@ -43,7 +43,7 @@
 		}
 
 		h2 {
-			font-family: 'Quicksand', sans-serif;
+			font-family: Tahoma, sans-serif;
 			font-size: 1.2em;
 			letter-spacing: .04em;
 
@@ -62,8 +62,11 @@
 			left: 15px;
 			width: 280px;
 			padding: 0 15px;
+			font-weight: regular;
+			font-family: Tahoma, sans-serif;
+			font-size: medium;
 			/* Add styles to match Leaflet UI elements */
-			background: rgba(256, 256, 256, .3);
+			background: rgba(290, 290, 290, .3);
 			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 			border: 1px solid #ddd;
 			border-radius: 5px;
@@ -86,7 +89,7 @@
 
 		/* Leaflet popup styles */
 		.leaflet-popup-content {
-			font-family: 'Quicksand', sans-serif;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			font-size: 1.1em;
 		}
 
@@ -110,7 +113,7 @@
 			}
 
 			.leaflet-popup-content {
-				font-family: 'Quicksand', sans-serif;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 				font-size: 0.9em;
 			}
 		}
@@ -127,24 +130,30 @@
 
 <body>
 
-	<h1>Awesome map title!</h1>
+	<h1>Amish Population Distribution in the United States</h1>
 
 	<div id='map'></div>
 
 	<section id="about">
-		<h2>About this</h2>
-		<p>Additional information about <a href="#">the data</a> and map goes here. Lorem ipsum dolor sit amet,
-			consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id
-			auctor lacus. Nam a dolor et justo luctus luctus. </p>
-		<p>Map authored by me, MY NAME</p>
+		<!--<h2>About this map</h2>-->
+		<p> This map shows state-level Amish population distribution in 2020. Darker colors reflect higher population.
+			Hover over a state to view 2000-2020 Amish population growth data. This map was developed using data from
+			the <a href="http://groups.etown.edu/amishstudies/">Young Center</a> for Anabaptist and Pietist Studies at
+			Elizabethtown College in Pennysylvania. The Young Center estimates that the Amish population doubles every
+			twenty years, reporting large families and high retention in the community (85%) as primary contributors to
+			population growth. </p>
+		<p> K.C. Vick, 2021 </p>
 	</section>
 
 	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
 		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
 		crossorigin=""></script>
-	<!-- Load a Leaflet plugin to provide geolocation if user shares their location with browser. -->
 	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"
 		charset="utf-8"></script>
+	<script src="https://unpkg.com/simple-statistics@7.6.0/dist/simple-statistics.min.js"> </script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" 
+		crossorigin="anonymous"> </script>
 	<script>
 		var options = {
 			center: [39.8, -95.8],
@@ -159,25 +168,54 @@
 			position: 'topright'
 		}).addTo(map);
 
-		// Get basemap URL from Leaflet Providers
-		var basemap_url = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+		var stateLayer = $.getJSON("Amish-population/us_states_20m.json", function (data) {
+			var dataLayer = L.geoJson(data, {
+				style: function (feature) {
+					return {
+						color: '#dddddd',
+						weight: 1,
+						fillOpacity: 1,
+						fillColor: '#1f78b4'
+					};
+				},
+				onEachFeature: function (feature, layer) {
+					var prop = layer.feature.properties
+					var popup = `<b>${feature.properties.NAME} County</b>` + " " + "has a median rent of" + " " + `<b>$${feature.properties.RENT}</b>`
+					layer.bindTooltip(popup)
+				},
+			}).addTo(map);
 
-		// Get basemap attributes from Leaflet Providers
-		var basemap_attributes = {
-			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-			subdomains: 'abcd',
-			maxZoom: 19
-		};
-		// requests some map tiles
-		var tiles = L.tileLayer(basemap_url, basemap_attributes);
+			// your json var: states
+			// states.forEach(function (state) {
+			// 	var polygon = L.polygon(state.geometry.coordinates, {
+			// 		weight: 1,
+			// 		fillOpacity: 0.7,
+			// 		color: 'white',
+			// 		dashArray: '3'
+			// 	}).addTo(map);
+			// });
 
-		map.addLayer(tiles);
+			// Get basemap URL from Leaflet Providers
+			var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-		var message = '<h2>University of Kentucky!</h2>Department of Geography';
+			var basemap_options = {
+				maxZoom: 19,
+				attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+				subdomains: 'abcd',
+				ext: 'png'
+			};
+			// Get basemap attributes from Leaflet Providers
+			// var basemap_attributes = {
+			// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+			// 	subdomains: 'abcd',
+			// 	maxZoom: 19
+			// };
+			// requests some map tiles
+			var tiles = L.tileLayer(basemap_url, basemap_url);
 
-		L.marker(map.getCenter())
-			.bindPopup(message)
-			.addTo(map)
+			map.addLayer(tiles);
+		});
+		//var message = '<h2>University of Kentucky!</h2>Department of Geography';
 	</script>
 
 </body>
