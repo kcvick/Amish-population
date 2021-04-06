@@ -147,16 +147,9 @@
 		charset="utf-8"></script>
 	<script>
 		var options = {
-			center: [38.038685, -84.504164],
-			zoom: 12,
+			center: [39.8, -95.8],
+			zoom: 4,
 			zoomControl: false
-		}
-
-		var locate_options = {
-			position: 'topright',
-			strings: {
-				title: "Show me where I am, yo!"
-			}
 		}
 
 		var map = L.map('map', options);
@@ -165,9 +158,6 @@
 		L.control.zoom({
 			position: 'topright'
 		}).addTo(map);
-
-		// add geolocation control to top right window position (Leaflet can handle multiple top-right elements)
-		L.control.locate(locate_options).addTo(map);
 
 		// Get basemap URL from Leaflet Providers
 		var basemap_url = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
