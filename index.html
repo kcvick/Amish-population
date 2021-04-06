@@ -145,15 +145,13 @@
 		<p> K.C. Vick, 2021 </p>
 	</section>
 
+	<!-- add jQuery JS script -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
 		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
 		crossorigin=""></script>
-	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"
-		charset="utf-8"></script>
 	<script src="https://unpkg.com/simple-statistics@7.6.0/dist/simple-statistics.min.js"> </script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" 
-		crossorigin="anonymous"> </script>
 	<script>
 		var options = {
 			center: [39.8, -95.8],
@@ -168,7 +166,7 @@
 			position: 'topright'
 		}).addTo(map);
 
-		var stateLayer = $.getJSON("Amish-population/us_states_20m.json", function (data) {
+		var stateLayer = $.getJSON("us_states_20m.json", function (data) {
 			var dataLayer = L.geoJson(data, {
 				style: function (feature) {
 					return {
