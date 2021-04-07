@@ -93,6 +93,11 @@
 			font-size: 1.1em;
 		}
 
+		.leaflet-tooltip {
+			width: 150px;
+			white-space: normal;
+		}
+
 		/* 
 		When browser is 900px high or less
 		make the font a little smaller.
@@ -130,18 +135,17 @@
 
 <body>
 
-	<h1>Amish Population Distribution in the United States</h1>
+	<h1>Amish Population Distribution and State-Level Rurality</h1>
 
 	<div id='map'></div>
 
 	<section id="about">
 		<!--<h2>About this map</h2>-->
-		<p> This map shows state-level Amish population distribution in 2020. Darker colors reflect higher population.
-			Hover over a state to view 2000-2020 Amish population growth data. This map was developed with resources from
-			the <a href="http://groups.etown.edu/amishstudies/">Young Center</a> for Anabaptist and Pietist Studies at
-			Elizabethtown College in Pennysylvania. The Young Center estimates that the Amish population doubles every
-			twenty years, reporting large families and high retention in the community (85%) as primary contributors to
-			population growth. </p>
+		<p> This map explores the link between Amish population and settlement distribution and state rurality. Darker
+			colors reflect higher Amish populations. State population density serves as an indicator of rurality.</p>
+		<p> The <a href="http://groups.etown.edu/amishstudies/">Young Center</a> estimates that the Amish population
+			doubles every twenty years. Large family size and high retention (85%) are primary
+			contributors to Amish population growth. </p>
 		<p> K.C. Vick, 2021 </p>
 	</section>
 
@@ -166,70 +170,125 @@
 			position: 'topright'
 		}).addTo(map);
 
-		var stateLayer = $.getJSON("us_states_20m.json", function (data) {
+		var attributeValue = "NAME",
+			popuValue = "AmPop2020";
+
+		var stateLayer = $.getJSON("agamishfinal.json", function (data) {
 			var dataLayer = L.geoJson(data, {
 				style: function (feature) {
 					return {
-						color: '#dddddd',
+						color: '#31a354',
 						weight: 1,
-						fillOpacity: 0.2,
+						fillOpacity: 0,
 						fillColor: '#FBFCFC'
 					};
 				},
 				onEachFeature: function (feature, layer) {
 					var prop = layer.feature.properties
-					var popup = `<b>${feature.properties.NAME}</b>` + " " + "has a median rent of" + " " + `<b>$${feature.properties.RENT}</b>`
+					var popup = "In 2020," + " " + `<b>${feature.properties.NAME}</b>` + " " + "was home to" + " " + `<b>${feature.properties.AmPop20}</b>` + " " + "Amish individuals and" + " " + `<b>${feature.properties.AmSett20}</b>` + " " + "settlements. The Amish population has increased by X percent since 2000. The state has a population density of XX."
 					layer.bindTooltip(popup)
 				},
 			}).addTo(map);
 
-			// var popLayer = $.getJSON("us_states_20m.json", function (data) {
-			// 	var dataLayer = L.geoJson(data, {
-			// 		style: function (feature) {
-			// 			return {
-			// 				color: '#dddddd',
-			// 				weight: 1,
-			// 				fillOpacity: 0.2,
-			// 				fillColor: '#FBFCFC'
-			// 			};
-			// 		},
-			// 		onEachFeature: function (feature, layer) {
-			// 			var prop = layer.feature.properties
-			// 			var popup = `<b>${feature.properties.NAME}</b>` + " " + "has a median rent of" + " " + `<b>$${feature.properties.RENT}</b>`
-			// 			layer.bindTooltip(popup)
-			// 		},
-			// 	}).addTo(map);
+			function getColor(d) {
+				return d == 0 ? '#edf8e9' :
+					d > 80000 ? '#005a32' :
+						d > 40000 ? '#238b45' :
+							d > 10000 ? '#41ab5d' :
+								d > 1000 ? '#74c476' :
+									d > 50 ? '#c7e9c0' :
+										d > 1 ? '#edf8e9' :
+											'#f7fcf5'
+			}
 
-				// your json var: states
-				// states.forEach(function (state) {
-				// 	var polygon = L.polygon(state.geometry.coordinates, {
-				// 		weight: 1,
-				// 		fillOpacity: 0.7,
-				// 		color: 'white',
-				// 		dashArray: '3'
-				// 	}).addTo(map);
-				// });
-
-				// Get basemap URL from Leaflet Providers
-				var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-
-				var basemap_options = {
-					maxZoom: 19,
-					attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
-					subdomains: 'abcd',
-					ext: 'png'
+			function style(feature) {
+				return {
+					fillColor: getColor(feature.properties.AmPop20),
+					weight: 0.3,
+					opacity: 0.1,
+					color: 'black',
+					fillOpacity: 0.6
 				};
-				// Get basemap attributes from Leaflet Providers
-				// var basemap_attributes = {
-				// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-				// 	subdomains: 'abcd',
-				// 	maxZoom: 19
-				// };
-				// requests some map tiles
-				var tiles = L.tileLayer(basemap_url, basemap_url);
+			}
 
-				map.addLayer(tiles);
-			});
+			L.geoJson(data, { style: style }).addTo(map);
+			// call to new function here gets the data out of the
+			// callback function
+			//drawMap(dataLayer);
+			// })
+
+			// function drawMap(dataLayer) {
+			// 	var breaks = getClassBreaks(dataLayer);
+			// 	dataLayer.eachLayer(function (layer) {
+
+			// 		var props = layer.feature.properties;
+
+			// 		layer.setStyle({
+			// 			fillColor: getColor(props[popuValue], breaks)
+			// 		})
+			// 		//console.log(props[normValue]);
+			// 		//console.log(breaks)
+			// 	})
+			// 	drawLegend(breaks)
+			// }
+
+			// function getClassBreaks(dataLayer) {
+			// 	// create empty Array for storing values
+			// 	var values = [];
+
+			// 	// loop through all the counties
+			// 	dataLayer.eachLayer(function (layer) {
+			// 		var props = layer.feature.properties;
+			// 		//if (normValue != null) {
+			// 		var value = props[popuValue];
+			// 		values.push(value);
+			// 	});
+
+			// 	// determine similar clusters
+			// 	var clusters = ss.ckmeans(values, 5);
+
+			// 	// create an array of the lowest value within each cluster
+			// 	var breaks = clusters.map(function (cluster) {
+			// 		return [cluster[0], cluster.pop()];
+			// 	});
+
+			// 	return breaks;
+			// } // end getClassBreaks function
+
+			// function getColor(d, breaks) {
+
+			// 	if (d <= breaks[0][1]) {
+			// 		return '#ffffff';
+			// 	} else if (d <= breaks[1][1]) {
+			// 		return '#ffccdd';
+			// 	} else if (d <= breaks[2][1]) {
+			// 		return '#ff80aa';
+			// 	} else if (d <= breaks[3][1]) {
+			// 		return '#ff6699';
+			// 	} else if (d <= breaks[4][1]) {
+			// 		return '#ff0055'
+			// 	}
+			// }// end getColor
+
+			var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+			var basemap_options = {
+				maxZoom: 19,
+				attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+				subdomains: 'abcd',
+				ext: 'png'
+			};
+			// Get basemap attributes from Leaflet Providers
+			// var basemap_attributes = {
+			// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+			// 	subdomains: 'abcd',
+			// 	maxZoom: 19
+			// };
+			// requests some map tiles
+			var tiles = L.tileLayer(basemap_url, basemap_url);
+
+			map.addLayer(tiles);
+		});
 		//var message = '<h2>University of Kentucky!</h2>Department of Geography';
 	</script>
 
