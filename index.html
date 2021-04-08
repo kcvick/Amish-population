@@ -90,12 +90,13 @@
 		/* Leaflet popup styles */
 		.leaflet-popup-content {
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			font-size: 1.1em;
+			font-size: 1.1em
 		}
 
 		.leaflet-tooltip {
 			width: 150px;
 			white-space: normal;
+			pointer-events: none
 		}
 
 		/* 
@@ -189,108 +190,181 @@
 					layer.bindTooltip(popup)
 				},
 			}).addTo(map);
+		
+		// CODE ADAPTED FROM LAB 9 == RETURNS ERROR FROM [1] ONCE WE GET TO THAT BREAK SECTION
+			// 	drawMap(dataLayer);
+		// })
 
-			function getColor(d) {
-				return d == 0 ? '#edf8e9' :
-					d > 80000 ? '#005a32' :
-						d > 40000 ? '#238b45' :
-							d > 10000 ? '#41ab5d' :
-								d > 1000 ? '#74c476' :
-									d > 50 ? '#c7e9c0' :
-										d > 1 ? '#edf8e9' :
-											'#f7fcf5'
-			}
+		// function drawMap(dataLayer) {
+		// 	var breaks = getClassBreaks(dataLayer);
+		// 	dataLayer.eachLayer(function (layer) {
+		// 		var props = layer.feature.properties;
+		// 		layer.setStyle({
+		// 			fillColor: getColor(props[popuValue], breaks)
+		// 		})
+		// 	})
+		// 	drawLegend(breaks)
+		// }
 
-			function style(feature) {
-				return {
-					fillColor: getColor(feature.properties.AmPop20),
-					weight: 0.3,
-					opacity: 0.1,
-					color: 'black',
-					fillOpacity: 0.6
-				};
-			}
+		// function getClassBreaks(dataLayer) {
+		// 	var values = [];
+		// 	dataLayer.eachLayer(function (layer) {
+		// 		var props = layer.feature.properties;
+		// 		var value = props[popuValue];
+		// 		values.push(value);
+		// 	});
 
-			L.geoJson(data, { style: style }).addTo(map);
-			// call to new function here gets the data out of the
-			// callback function
-			//drawMap(dataLayer);
-			// })
+		// 	var clusters = ss.ckmeans(values, 7);
 
-			// function drawMap(dataLayer) {
-			// 	var breaks = getClassBreaks(dataLayer);
-			// 	dataLayer.eachLayer(function (layer) {
+		// 	var breaks = clusters.map(function (cluster) {
+		// 		return [cluster[0], cluster.pop()];
+		// 	});
 
-			// 		var props = layer.feature.properties;
+		// 	return breaks;
+		// }
 
-			// 		layer.setStyle({
-			// 			fillColor: getColor(props[popuValue], breaks)
-			// 		})
-			// 		//console.log(props[normValue]);
-			// 		//console.log(breaks)
-			// 	})
-			// 	drawLegend(breaks)
-			// }
+		// function getColor(d, breaks) {
+		// 	if (d <= breaks[0][1]) {
+		// 		return '#ffffff';
+		// 	} else if (d <= breaks[1][1]) {
+		// 		return '#ffccdd';
+		// 	} else if (d <= breaks[2][1]) {
+		// 		return '#ff80aa';
+		// 	} else if (d <= breaks[3][1]) {
+		// 		return '#ff6699';
+		// 	} else if (d <= breaks[4][1]) {
+		// 		return '#ff0055';
+		// 	} else if (d <= breaks[5][1]) {
+		// 		return '#ff0055';
+		// 	} else if (d <= breaks[6][1]) {
+		// 		return '#ff0055';
+		// 	} else if (d <= breaks [7][1]) {
+		// 		}
+		// 	}
 
-			// function getClassBreaks(dataLayer) {
-			// 	// create empty Array for storing values
-			// 	var values = [];
+		// function drawLegend(breaks) {
+		// 	var legend = L.control({ position: 'bottomright' });
+		// 	legend.onAdd = function () {
+		// 		var div = L.DomUtil.create('div', 'legend');
+		// 		div.innerHTML = `text here?`;
+		// 		for (var i = 0; i < breaks.length; i++) {
+		// 			var color = getColor(breaks[i][0], breaks);
+		// 			div.innerHTML +=
+		// 				`<span style="background:${color}"></span>
+        //     <label>${breaks[i][0]}&mdash;
+        //     ${(breaks[i][1])}</label>`;
+		// 		}
+		// 		return div;
+		// 	};
+		// 	legend.addTo(map);
+		// }
+		// ORIGINAL ATTEMPT USING CODE ADAPTED FROM ONLINE SOURCE
+		// function getColor(d) {
+		// 	return d == 0 ? '#edf8e9' :
+		// 		d > 80000 ? '#005a32' :
+		// 			d > 40000 ? '#238b45' :
+		// 				d > 10000 ? '#41ab5d' :
+		// 					d > 1000 ? '#74c476' :
+		// 						d > 50 ? '#c7e9c0' :
+		// 							d > 1 ? '#edf8e9' :
+		// 								'#f7fcf5'
+		// }
 
-			// 	// loop through all the counties
-			// 	dataLayer.eachLayer(function (layer) {
-			// 		var props = layer.feature.properties;
-			// 		//if (normValue != null) {
-			// 		var value = props[popuValue];
-			// 		values.push(value);
-			// 	});
+		// function style(feature) {
+		// 	return {
+		// 		fillColor: getColor(feature.properties.AmPop20),
+		// 		weight: 0.3,
+		// 		opacity: 0.1,
+		// 		color: 'black',
+		// 		fillOpacity: 0.6
+		// 	};
+		// }
 
-			// 	// determine similar clusters
-			// 	var clusters = ss.ckmeans(values, 5);
 
-			// 	// create an array of the lowest value within each cluster
-			// 	var breaks = clusters.map(function (cluster) {
-			// 		return [cluster[0], cluster.pop()];
-			// 	});
+		// L.geoJson(data, { 
+		// 	style: style,
+		// }).addTo(map);
 
-			// 	return breaks;
-			// } // end getClassBreaks function
+		// call to new function here gets the data out of the
+		// callback function
+		//drawMap(dataLayer);
+		// })
 
-			// function getColor(d, breaks) {
+		// function drawMap(dataLayer) {
+		// 	var breaks = getClassBreaks(dataLayer);
+		// 	dataLayer.eachLayer(function (layer) {
 
-			// 	if (d <= breaks[0][1]) {
-			// 		return '#ffffff';
-			// 	} else if (d <= breaks[1][1]) {
-			// 		return '#ffccdd';
-			// 	} else if (d <= breaks[2][1]) {
-			// 		return '#ff80aa';
-			// 	} else if (d <= breaks[3][1]) {
-			// 		return '#ff6699';
-			// 	} else if (d <= breaks[4][1]) {
-			// 		return '#ff0055'
-			// 	}
-			// }// end getColor
+		// 		var props = layer.feature.properties;
 
-			var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+		// 		layer.setStyle({
+		// 			fillColor: getColor(props[popuValue], breaks)
+		// 		})
+		// 		//console.log(props[normValue]);
+		// 		//console.log(breaks)
+		// 	})
+		// 	drawLegend(breaks)
+		// }
 
-			var basemap_options = {
-				maxZoom: 19,
-				attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
-				subdomains: 'abcd',
-				ext: 'png'
-			};
-			// Get basemap attributes from Leaflet Providers
-			// var basemap_attributes = {
-			// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-			// 	subdomains: 'abcd',
-			// 	maxZoom: 19
-			// };
-			// requests some map tiles
-			var tiles = L.tileLayer(basemap_url, basemap_url);
+		// function getClassBreaks(dataLayer) {
+		// 	// create empty Array for storing values
+		// 	var values = [];
 
-			map.addLayer(tiles);
+		// 	// loop through all the counties
+		// 	dataLayer.eachLayer(function (layer) {
+		// 		var props = layer.feature.properties;
+		// 		//if (normValue != null) {
+		// 		var value = props[popuValue];
+		// 		values.push(value);
+		// 	});
+
+		// 	// determine similar clusters
+		// 	var clusters = ss.ckmeans(values, 5);
+
+		// 	// create an array of the lowest value within each cluster
+		// 	var breaks = clusters.map(function (cluster) {
+		// 		return [cluster[0], cluster.pop()];
+		// 	});
+
+		// 	return breaks;
+		// } // end getClassBreaks function
+
+		// function getColor(d, breaks) {
+
+		// 	if (d <= breaks[0][1]) {
+		// 		return '#ffffff';
+		// 	} else if (d <= breaks[1][1]) {
+		// 		return '#ffccdd';
+		// 	} else if (d <= breaks[2][1]) {
+		// 		return '#ff80aa';
+		// 	} else if (d <= breaks[3][1]) {
+		// 		return '#ff6699';
+		// 	} else if (d <= breaks[4][1]) {
+		// 		return '#ff0055'
+		// 	}
+		// }// end getColor
+
+		var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+		var basemap_options = {
+			maxZoom: 19,
+			attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+			subdomains: 'abcd',
+			ext: 'png'
+		};
+		// Get basemap attributes from Leaflet Providers
+		// var basemap_attributes = {
+		// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+		// 	subdomains: 'abcd',
+		// 	maxZoom: 19
+		// };
+		// requests some map tiles
+		var tiles = L.tileLayer(basemap_url, basemap_url);
+
+		map.addLayer(tiles);
 		});
 		//var message = '<h2>University of Kentucky!</h2>Department of Geography';
-	</script>
+	
+		</script>
 
 </body>
 
