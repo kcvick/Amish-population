@@ -175,6 +175,7 @@
 			popuValue = "AmPop2020";
 
 		var stateLayer = $.getJSON("agamishfinal.json", function (data) {
+		
 			var dataLayer = L.geoJson(data, {
 				style: function (feature) {
 					return {
@@ -186,185 +187,202 @@
 				},
 				onEachFeature: function (feature, layer) {
 					var prop = layer.feature.properties
-					var popup = "In 2020," + " " + `<b>${feature.properties.NAME}</b>` + " " + "was home to" + " " + `<b>${feature.properties.AmPop20}</b>` + " " + "Amish individuals and" + " " + `<b>${feature.properties.AmSett20}</b>` + " " + "settlements. The Amish population has increased by X percent since 2000. The state has a population density of XX."
-					layer.bindTooltip(popup)
+					var popupgrow = "In 2020," + " " + `<b>${feature.properties.NAME}</b>` + " " + "was home to" + " " + `<b>${feature.properties.AmPop20}</b>` + " " + "Amish individuals and" + " " + `<b>${feature.properties.AmSett20}</b>` + " " + "settlements. The Amish population in 2020 was" + " " + `<b>${Math.round(feature.properties.AmPop20 / feature.properties.AmPop00)}</b>` + " " + "times higher than it was in 2000. The state has an overall land population density of" + " " + `<b>${Math.round(feature.properties.Pop / feature.properties.LandAreaSqMi)}</b>` + " " + "people per square mile."
+					layer.bindTooltip(popupgrow);
 				},
-			}).addTo(map);
 		
-		// CODE ADAPTED FROM LAB 9 == RETURNS ERROR FROM [1] ONCE WE GET TO THAT BREAK SECTION
-			// 	drawMap(dataLayer);
-		// })
+			}).addTo(map);
 
-		// function drawMap(dataLayer) {
-		// 	var breaks = getClassBreaks(dataLayer);
-		// 	dataLayer.eachLayer(function (layer) {
-		// 		var props = layer.feature.properties;
-		// 		layer.setStyle({
-		// 			fillColor: getColor(props[popuValue], breaks)
-		// 		})
-		// 	})
-		// 	drawLegend(breaks)
-		// }
+			// CODE ADAPTED FROM LAB 9 == RETURNS ERROR FROM [1] ONCE WE GET TO THAT BREAK SECTION
+				drawMap(dataLayer);
+			})
 
-		// function getClassBreaks(dataLayer) {
-		// 	var values = [];
-		// 	dataLayer.eachLayer(function (layer) {
-		// 		var props = layer.feature.properties;
-		// 		var value = props[popuValue];
-		// 		values.push(value);
-		// 	});
+			function drawMap(dataLayer) {
+				var breaks = getClassBreaks(dataLayer);
+				dataLayer.eachLayer(function (layer) {
+					var props = layer.feature.properties;
+					layer.setStyle({
+						fillColor: getColor(props[popuValue], breaks)
+					})
+				})
+				drawLegend(breaks)
+			}
 
-		// 	var clusters = ss.ckmeans(values, 7);
+			function getClassBreaks(dataLayer) {
+				var values = [];
+				dataLayer.eachLayer(function (layer) {
+					var props = layer.feature.properties;
+					var value = props[popuValue];
+					values.push(Number(value));
+				});
 
-		// 	var breaks = clusters.map(function (cluster) {
-		// 		return [cluster[0], cluster.pop()];
-		// 	});
+				var clusters = ss.ckmeans(values, 7);
 
-		// 	return breaks;
-		// }
+				var breaks = clusters.map(function (cluster) {
+					return [cluster[0], cluster.pop()];
+				});
 
-		// function getColor(d, breaks) {
-		// 	if (d <= breaks[0][1]) {
-		// 		return '#ffffff';
-		// 	} else if (d <= breaks[1][1]) {
-		// 		return '#ffccdd';
-		// 	} else if (d <= breaks[2][1]) {
-		// 		return '#ff80aa';
-		// 	} else if (d <= breaks[3][1]) {
-		// 		return '#ff6699';
-		// 	} else if (d <= breaks[4][1]) {
-		// 		return '#ff0055';
-		// 	} else if (d <= breaks[5][1]) {
-		// 		return '#ff0055';
-		// 	} else if (d <= breaks[6][1]) {
-		// 		return '#ff0055';
-		// 	} else if (d <= breaks [7][1]) {
-		// 		}
-		// 	}
+				return breaks;
+			}
 
-		// function drawLegend(breaks) {
-		// 	var legend = L.control({ position: 'bottomright' });
-		// 	legend.onAdd = function () {
-		// 		var div = L.DomUtil.create('div', 'legend');
-		// 		div.innerHTML = `text here?`;
-		// 		for (var i = 0; i < breaks.length; i++) {
-		// 			var color = getColor(breaks[i][0], breaks);
-		// 			div.innerHTML +=
-		// 				`<span style="background:${color}"></span>
-        //     <label>${breaks[i][0]}&mdash;
-        //     ${(breaks[i][1])}</label>`;
-		// 		}
-		// 		return div;
-		// 	};
-		// 	legend.addTo(map);
-		// }
-		// ORIGINAL ATTEMPT USING CODE ADAPTED FROM ONLINE SOURCE
-		// function getColor(d) {
-		// 	return d == 0 ? '#edf8e9' :
-		// 		d > 80000 ? '#005a32' :
-		// 			d > 40000 ? '#238b45' :
-		// 				d > 10000 ? '#41ab5d' :
-		// 					d > 1000 ? '#74c476' :
-		// 						d > 50 ? '#c7e9c0' :
-		// 							d > 1 ? '#edf8e9' :
-		// 								'#f7fcf5'
-		// }
+			function getColor(d, breaks) {
+				if (d <= breaks[0][1]) {
+					return '#ffffff';
+				} else if (d <= breaks[1][1]) {
+					return '#ffccdd';
+				} else if (d <= breaks[2][1]) {
+					return '#ff80aa';
+				} else if (d <= breaks[3][1]) {
+					return '#ff6699';
+				} else if (d <= breaks[4][1]) {
+					return '#ff0055';
+				} else if (d <= breaks[5][1]) {
+					return '#ff0055';
+				} else if (d <= breaks[6][1]) {
+					return '#ff0055';
+				} else if (d <= breaks [7][1]) {
+					}
+				}
 
-		// function style(feature) {
-		// 	return {
-		// 		fillColor: getColor(feature.properties.AmPop20),
-		// 		weight: 0.3,
-		// 		opacity: 0.1,
-		// 		color: 'black',
-		// 		fillOpacity: 0.6
-		// 	};
-		// }
+			function drawLegend(breaks) {
+				var legend = L.control({ position: 'bottomright' });
+				legend.onAdd = function () {
+					var div = L.DomUtil.create('div', 'legend');
+					div.innerHTML = `text here?`;
+					for (var i = 0; i < breaks.length; i++) {
+						var color = getColor(breaks[i][0], breaks);
+						div.innerHTML +=
+							`<span style="background:${color}"></span>
+			    <label>${breaks[i][0]}&mdash;
+			    ${(breaks[i][1])}</label>`;
+					}
+					return div;
+				};
+				legend.addTo(map);
+			}
+			// ORIGINAL ATTEMPT USING CODE ADAPTED FROM ONLINE SOURCE
+			// function getColor(d) {
+			// 	return d == 0 ? '#edf8e9' :
+			// 		d > 80000 ? '#005a32' :
+			// 			d > 40000 ? '#238b45' :
+			// 				d > 10000 ? '#41ab5d' :
+			// 					d > 1000 ? '#74c476' :
+			// 						d > 50 ? '#c7e9c0' :
+			// 							d > 1 ? '#edf8e9' :
+			// 								'#f7fcf5'
+			// }
+
+			// function style(feature) {
+			// 	return {
+			// 		fillColor: getColor(feature.properties.AmPop20),
+			// 		weight: 0.3,
+			// 		opacity: 0.1,
+			// 		color: 'black',
+			// 		fillOpacity: 0.6
+			// 	};
+			// }
 
 
-		// L.geoJson(data, { 
-		// 	style: style,
-		// }).addTo(map);
+			// L.geoJson(data, { 
+			// 	style: style,
+			// }).addTo(map);
 
-		// call to new function here gets the data out of the
-		// callback function
-		//drawMap(dataLayer);
-		// })
+			// call to new function here gets the data out of the
+			// callback function
+			//drawMap(dataLayer);
+			// })
 
-		// function drawMap(dataLayer) {
-		// 	var breaks = getClassBreaks(dataLayer);
-		// 	dataLayer.eachLayer(function (layer) {
+			// function drawMap(dataLayer) {
+			// 	var breaks = getClassBreaks(dataLayer);
+			// 	dataLayer.eachLayer(function (layer) {
 
-		// 		var props = layer.feature.properties;
+			// 		var props = layer.feature.properties;
 
-		// 		layer.setStyle({
-		// 			fillColor: getColor(props[popuValue], breaks)
-		// 		})
-		// 		//console.log(props[normValue]);
-		// 		//console.log(breaks)
-		// 	})
-		// 	drawLegend(breaks)
-		// }
+			// 		layer.setStyle({
+			// 			fillColor: getColor(props[popuValue], breaks)
+			// 		})
+			// 		//console.log(props[normValue]);
+			// 		//console.log(breaks)
+			// 	})
+			// 	drawLegend(breaks)
+			// }
 
-		// function getClassBreaks(dataLayer) {
-		// 	// create empty Array for storing values
-		// 	var values = [];
+			// function getClassBreaks(dataLayer) {
+			// 	// create empty Array for storing values
+			// 	var values = [];
 
-		// 	// loop through all the counties
-		// 	dataLayer.eachLayer(function (layer) {
-		// 		var props = layer.feature.properties;
-		// 		//if (normValue != null) {
-		// 		var value = props[popuValue];
-		// 		values.push(value);
-		// 	});
+			// 	// loop through all the counties
+			// 	dataLayer.eachLayer(function (layer) {
+			// 		var props = layer.feature.properties;
+			// 		//if (normValue != null) {
+			// 		var value = props[popuValue];
+			// 		values.push(value);
+			// 	});
 
-		// 	// determine similar clusters
-		// 	var clusters = ss.ckmeans(values, 5);
+			// 	// determine similar clusters
+			// 	var clusters = ss.ckmeans(values, 5);
 
-		// 	// create an array of the lowest value within each cluster
-		// 	var breaks = clusters.map(function (cluster) {
-		// 		return [cluster[0], cluster.pop()];
-		// 	});
+			// 	// create an array of the lowest value within each cluster
+			// 	var breaks = clusters.map(function (cluster) {
+			// 		return [cluster[0], cluster.pop()];
+			// 	});
 
-		// 	return breaks;
-		// } // end getClassBreaks function
+			// 	return breaks;
+			// } // end getClassBreaks function
 
-		// function getColor(d, breaks) {
+			// function getColor(d, breaks) {
 
-		// 	if (d <= breaks[0][1]) {
-		// 		return '#ffffff';
-		// 	} else if (d <= breaks[1][1]) {
-		// 		return '#ffccdd';
-		// 	} else if (d <= breaks[2][1]) {
-		// 		return '#ff80aa';
-		// 	} else if (d <= breaks[3][1]) {
-		// 		return '#ff6699';
-		// 	} else if (d <= breaks[4][1]) {
-		// 		return '#ff0055'
-		// 	}
-		// }// end getColor
+			// 	if (d <= breaks[0][1]) {
+			// 		return '#ffffff';
+			// 	} else if (d <= breaks[1][1]) {
+			// 		return '#ffccdd';
+			// 	} else if (d <= breaks[2][1]) {
+			// 		return '#ff80aa';
+			// 	} else if (d <= breaks[3][1]) {
+			// 		return '#ff6699';
+			// 	} else if (d <= breaks[4][1]) {
+			// 		return '#ff0055'
+			// 	}
+			// }// end getColor
+			
+			$.when(stateLayer).done(function () {
+				$.getJSON("agamishfinal.json", function (data) {
+					var elLayer = L.geoJson(data, {
+						style: function (feature) {
+							return {
+								color: '',
+								weight: 2,
+								fillOpacity: 0,
+								interactive: false
+							};
+						},
+					});
+					elLayer.addTo(map)
+				})
+			})
+			
+			var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-		var basemap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+			var basemap_options = {
+				maxZoom: 19,
+				attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+				subdomains: 'abcd',
+				ext: 'png'
+			};
+			// Get basemap attributes from Leaflet Providers
+			// var basemap_attributes = {
+			// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+			// 	subdomains: 'abcd',
+			// 	maxZoom: 19
+			// };
+			// requests some map tiles
+			var tiles = L.tileLayer(basemap_url, basemap_url);
 
-		var basemap_options = {
-			maxZoom: 19,
-			attribution: 'Map tiles by <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
-			subdomains: 'abcd',
-			ext: 'png'
-		};
-		// Get basemap attributes from Leaflet Providers
-		// var basemap_attributes = {
-		// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-		// 	subdomains: 'abcd',
-		// 	maxZoom: 19
-		// };
-		// requests some map tiles
-		var tiles = L.tileLayer(basemap_url, basemap_url);
-
-		map.addLayer(tiles);
-		});
+			map.addLayer(tiles);
+		//});
 		//var message = '<h2>University of Kentucky!</h2>Department of Geography';
-	
-		</script>
+
+	</script>
 
 </body>
 
